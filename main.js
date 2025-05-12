@@ -25,7 +25,7 @@ async function getWeather(location) {
 }
 
 function processWeatherData(weatherData) {
-    const { address, description, days } = weatherData;
+    const { resolvedAddress, description, days } = weatherData;
 
     const today = new Date();
     const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split('T')[0];
@@ -57,7 +57,7 @@ function processWeatherData(weatherData) {
     }));
 
     return {
-        location: address,
+        location: resolvedAddress,
         description: description,
         currentDay: processedCurrentDay,
         forecast: processedFutureDays
@@ -81,7 +81,7 @@ async function displayWeather(weatherData) {
         iconDiv.classList.add('weather-icon');
 
         const iconImg = document.createElement('img');
-        iconImg.src = `/icons/${currentDay.icon}.svg`; // make sure these match the icon names from the API
+        iconImg.src = `icons/${currentDay.icon}.svg`; // make sure these match the icon names from the API
         iconImg.alt = currentDay.conditions;
         iconImg.classList.add('weather-icon-img');
 
@@ -126,8 +126,11 @@ async function displayWeather(weatherData) {
         const date = document.createElement('h3');
         date.textContent = `${day.date}`;
 
-        const tempLowHigh = document.createElement('p');
-        tempLowHigh.textContent = `High: ${day.tempmax}°C Low: ${day.tempmin}°C`;
+        const tempHigh = document.createElement('p');
+        tempHigh.textContent = `High: ${day.tempmax}°C`;
+
+        const tempLow = document.createElement('p');
+        tempLow.textContent = `Low: ${day.tempmin}°C`
 
         const precip = document.createElement('p');
         precip.textContent = `Precipitation: ${day.precip} mm`;
@@ -136,14 +139,15 @@ async function displayWeather(weatherData) {
         windSpeed.textContent = `Wind: ${day.windspeed} m/s`;
 
         const iconImg = document.createElement('img');
-        iconImg.src = `/icons/${day.icon}.svg`;
+        iconImg.src = `icons/${day.icon}.svg`;
         iconImg.alt = day.icon;
         iconImg.classList.add('forecast-icon');
 
         weatherCard.appendChild(iconImg);
 
         weatherCard.appendChild(date);
-        weatherCard.appendChild(tempLowHigh);
+        weatherCard.appendChild(tempHigh);
+        weatherCard.appendChild(tempLow);
         weatherCard.appendChild(precip);
         weatherCard.appendChild(windSpeed);
 
